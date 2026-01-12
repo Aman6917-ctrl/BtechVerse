@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Resource</title>
+<link rel="stylesheet" href="./assets/styles.css">
+<script type="module" src="./js/upload.js"></script>
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1481.0.min.js"></script>
+
+</head>
+<body>
+  <div class="upload-container">
+    <h1>Upload Resource</h1>
+
+    <!-- Upload Form -->
+    <form id="uploadForm">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" required />
+
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject" placeholder="e.g., Data Structures, Machine Learning, etc." />
+
+      <label for="creditName">Credit Name (Optional)</label>
+      <input type="text" id="creditName" name="creditName" placeholder="Your name or contributor name" />
+
+      <label for="branch">Branch (Select multiple)</label>
+      <div id="branchCheckboxes" class="branch-checkboxes">
+        <label><input type="checkbox" name="branch" value="CSE"><span>Computer Science Engineering</span></label>
+        <label><input type="checkbox" name="branch" value="AIML"><span>AI & Machine Learning</span></label>
+        <label><input type="checkbox" name="branch" value="Data Science"><span>Data Science</span></label>
+        <label><input type="checkbox" name="branch" value="Cyber Security"><span>Cyber Security</span></label>
+        <label><input type="checkbox" name="branch" value="ECE"><span>Electronics & Communication</span></label>
+        <label><input type="checkbox" name="branch" value="Interview-Prep"><span>Interview Preparation</span></label>
+      </div>
+
+      <label for="category">Category</label>
+      <select id="category" name="category" required>
+        <option value="">-- Select Category --</option>
+        <option value="Handwritten-Notes">Handwritten Notes</option>
+        <option value="PPTs">Presentations</option>
+        <option value="Previous-Year-Papers">Previous Year Papers</option>
+        <option value="DSA">DSA</option>
+        <option value="DBMS">DBMS</option>
+        <option value="OS">Operating Systems</option>
+        <option value="CN">Computer Networks</option>
+        <option value="HR">HR Questions</option>
+        <option value="Resume">Resume Tips</option>
+        <option value="Aptitude">Aptitude</option>
+        <option value="Roadmap">Placement Roadmap</option>
+      </select>
+
+      <label for="fileInput">Choose File</label>
+      <input type="file" id="fileInput" name="file" required />
+
+      <button type="submit">Upload</button>
+    </form>
+
+    <!-- Progress Bar -->
+    <div id="progressContainer" style="display:none; margin-top:20px;">
+      <progress id="uploadProgress" value="0" max="100"></progress>
+      <span id="progressText">0%</span>
+    </div>
+
+    <!-- Upload Result -->
+    <div id="uploadResult" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- ✅ Link your upload.js (ES module) -->
+  <script type="module" src="./upload.js"></script>
+
+  <script>
+    console.log("✅ upload.html loaded and script linked");
+  </script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BTechVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/style.css" rel="stylesheet">
+    <meta name="env-FIREBASE_API_KEY" content="AIzaSyAfXDF2MOkPXudbI10oKeOYugDz3GwREa4">
+    <meta name="env-FIREBASE_PROJECT_ID" content="btechverse-c469b">
+    <meta name="env-FIREBASE_APP_ID" content="145554824271:web:345ce29491d664e1d29e3a">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">BTechVerse</h1>
+                    </a>
+                    <div class="ml-8">
+                        <span class="text-lg font-semibold text-gray-700">Admin Dashboard</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="upload.html" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-300">
+                        <i class="fas fa-plus mr-2"></i>Upload
+                    </a>
+                    <a href="resources.html" class="text-gray-600 hover:text-gray-900">All Resources</a>
+                    <div id="userSection" class="flex items-center space-x-4">
+                        <span id="userEmail" class="text-gray-700"></span>
+                        <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Check Warning -->
+    <div id="accessDenied" class="hidden max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg text-center">
+            <i class="fas fa-exclamation-triangle text-3xl mb-4"></i>
+            <h2 class="text-xl font-bold mb-2">Access Denied</h2>
+            <p>You don't have permission to access this page. Only administrators can view the dashboard.</p>
+            <a href="index.html" class="inline-block mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300">
+                Go Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="dashboardContent" class="hidden max-w-7xl mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Admin Dashboard</h1>
+            <p class="text-xl text-gray-600">Manage educational resources and monitor platform activity</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Resources</p>
+                        <p id="totalResources" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <i class="fas fa-users text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Users</p>
+                        <p id="totalUsers" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <i class="fas fa-download text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Downloads Today</p>
+                        <p id="downloadsToday" class="text-2xl font-bold text-gray-900">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+                        <i class="fas fa-graduation-cap text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Branches</p>
+                        <p class="text-2xl font-bold text-gray-900">5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Resources -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Recent Uploads</h2>
+                <a href="upload.html" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Add Resource
+                </a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Upload Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentResourcesTable" class="bg-white divide-y divide-gray-200">
+                        <!-- Resources will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loading State -->
+            <div id="tableLoading" class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-2xl text-indigo-600 mb-2"></i>
+                <p class="text-gray-600">Loading recent uploads...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="tableEmpty" class="hidden text-center py-8">
+                <i class="fas fa-folder-open text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">No resources uploaded yet</h3>
+                <p class="text-gray-500">Start by uploading your first educational resource.</p>
+            </div>
+        </div>
+
+        <!-- Branch Distribution -->
+        <div class="grid lg:grid-cols-2 gap-12">
+            <!-- Resources by Branch -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Resources by Branch</h3>
+                <div id="branchStats" class="space-y-4">
+                    <!-- Branch statistics will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">Recent Activity</h3>
+                <div id="recentActivity" class="space-y-4">
+                    <!-- Recent activity will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Resource</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">
+                        Are you sure you want to delete "<span id="deleteResourceTitle" class="font-semibold"></span>"? 
+                        This action cannot be undone and will permanently remove the file from both the database and storage.
+                    </p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-700 transition duration-300">
+                        Delete
+                    </button>
+                    <button id="cancelDelete" class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md w-24 hover:bg-gray-400 transition duration-300">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50"></div>
+
+    <!-- Scripts -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1481.0.min.js"></script>
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/display.js?v=2"></script>
+    <script type="module" src="js/s3-service.js"></script>
+    <script src="js/utils.js"></script>
+    
+    <script>
+        let currentDeleteResourceId = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthState();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Delete modal handlers
+            document.getElementById('cancelDelete').addEventListener('click', function() {
+                closeDeleteModal();
+            });
+
+            document.getElementById('confirmDelete').addEventListener('click', function() {
+                if (currentDeleteResourceId) {
+                    confirmDeleteResource(currentDeleteResourceId);
+                }
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDeleteModal();
+                }
+            });
+        }
+
+        async function loadDashboardData() {
+            try {
+                // Show loading state
+                document.getElementById('tableLoading').classList.remove('hidden');
+                document.getElementById('tableEmpty').classList.add('hidden');
+                
+                if (window.loadAllResources) {
+                    // Force fresh data by calling the function
+                    const resources = await window.loadAllResources();
+                    console.log('Loaded resources:', resources.length);
+                    
+                    updateStatistics(resources);
+                    displayRecentResources(resources);
+                    displayBranchStats(resources);
+                    displayRecentActivity(resources);
+                    
+                    // Hide loading state
+                    document.getElementById('tableLoading').classList.add('hidden');
+                } else {
+                    hideLoading();
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                hideLoading();
+                showToast('Error loading dashboard data', 'error');
+            }
+        }
+
+        function updateStatistics(resources) {
+            document.getElementById('totalResources').textContent = resources.length;
+            
+            // For demo purposes, these would typically come from analytics
+            document.getElementById('totalUsers').textContent = '150+';
+            document.getElementById('downloadsToday').textContent = '45';
+        }
+
+        function displayRecentResources(resources) {
+            const tableBody = document.getElementById('recentResourcesTable');
+            const tableLoading = document.getElementById('tableLoading');
+            const tableEmpty = document.getElementById('tableEmpty');
+
+            if (resources.length === 0) {
+                tableLoading.classList.add('hidden');
+                tableEmpty.classList.remove('hidden');
+                return;
+            }
+
+            tableLoading.classList.add('hidden');
+            tableEmpty.classList.add('hidden');
+
+            // Sort by timestamp (most recent first) and take first 10
+            const recentResources = resources
+                .sort((a, b) => b.timestamp?.toDate() - a.timestamp?.toDate())
+                .slice(0, 10);
+
+            tableBody.innerHTML = recentResources.map(resource => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${resource.title}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${resource.branch}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${getCategoryDisplayName(resource.category)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${resource.subject}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(resource.timestamp?.toDate()).toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="viewResource('${resource.fileURL}')" 
+                                class="text-indigo-600 hover:text-indigo-900 mr-3">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="openDeleteModal('${resource.id}', '${resource.title}')" 
+                                class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayBranchStats(resources) {
+            const branchStats = document.getElementById('branchStats');
+            
+            // Count resources by branch
+            const branchCounts = resources.reduce((acc, resource) => {
+                acc[resource.branch] = (acc[resource.branch] || 0) + 1;
+                return acc;
+            }, {});
+
+            const branchColors = {
+                'CSE': 'bg-blue-500',
+                'AIML': 'bg-purple-500',
+                'Data Science': 'bg-green-500',
+                'Cyber Security': 'bg-red-500',
+                'ECE': 'bg-orange-500',
+                'Interview-Prep': 'bg-pink-500'
+            };
+
+            const totalResources = resources.length;
+
+            branchStats.innerHTML = Object.entries(branchCounts).map(([branch, count]) => {
+                const percentage = totalResources > 0 ? Math.round((count / totalResources) * 100) : 0;
+                return `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full ${branchColors[branch] || 'bg-gray-500'} mr-3"></div>
+                            <span class="text-sm font-medium text-gray-700">${branch}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 mr-2">${count} resources</span>
+                            <span class="text-xs text-gray-400">${percentage}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayRecentActivity(resources) {
+            const activityContainer = document.getElementById('recentActivity');
+            
+            // Sort by timestamp and take first 5
+            const recentActivity = resources
+                .sort((a, b) => b.timestamp?.toDate() - a.timestamp?.toDate())
+                .slice(0, 5);
+
+            if (recentActivity.length === 0) {
+                activityContainer.innerHTML = '<p class="text-gray-500 italic">No recent activity</p>';
+                return;
+            }
+
+            activityContainer.innerHTML = recentActivity.map(resource => `
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition duration-200">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-upload text-green-600"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">${resource.title}</p>
+                        <p class="text-xs text-gray-500">
+                            Uploaded to ${resource.branch} - ${getCategoryDisplayName(resource.category)}
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            ${formatTimeAgo(resource.timestamp?.toDate())}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatTimeAgo(date) {
+            if (!date) return 'Unknown';
+            
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
+        function getCategoryDisplayName(category) {
+            const displayNames = {
+                'Handwritten-Notes': 'Handwritten Notes',
+                'Previous-Year-Papers': 'Previous Year Papers',
+                'Interview-Prep': 'Interview Prep',
+                'PPTs': 'Presentations',
+                'DSA': 'DSA',
+                'DBMS': 'DBMS',
+                'OS': 'Operating Systems',
+                'CN': 'Computer Networks',
+                'HR': 'HR Questions',
+                'Resume': 'Resume Tips',
+                'Aptitude': 'Aptitude',
+                'Roadmap': 'Placement Roadmap'
+            };
+            return displayNames[category] || category;
+        }
+
+        async function viewResource(fileURL) {
+            try {
+                showToast('Opening file...', 'info');
+                await window.viewFileFromS3(fileURL);
+                showToast('File opened in new tab', 'success');
+            } catch (error) {
+                console.error('Failed to open file:', error);
+                showToast('Failed to open file. Please try again.', 'error');
+            }
+        }
+
+        function openDeleteModal(resourceId, resourceTitle) {
+            currentDeleteResourceId = resourceId;
+            document.getElementById('deleteResourceTitle').textContent = resourceTitle;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            currentDeleteResourceId = null;
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        async function confirmDeleteResource(resourceId) {
+            try {
+                showToast('Deleting resource...', 'info');
+                
+                if (window.deleteResource) {
+                    await window.deleteResource(resourceId);
+                    showToast('Resource deleted successfully', 'success');
+                    closeDeleteModal();
+                    
+                    // Add a small delay to ensure deletion is complete, then refresh
+                    setTimeout(async () => {
+                        try {
+                            await loadDashboardData();
+                        } catch (refreshError) {
+                            console.error('Error refreshing dashboard:', refreshError);
+                            showToast('Resource deleted but failed to refresh view', 'warning');
+                        }
+                    }, 500);
+                } else {
+                    showToast('Delete function not available', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting resource:', error);
+                showToast('Error deleting resource', 'error');
+                closeDeleteModal();
+            }
+        }
+
+        function hideLoading() {
+            document.getElementById('tableLoading').classList.add('hidden');
+        }
+
+        function showEmptyState() {
+            document.getElementById('tableEmpty').classList.remove('hidden');
+        }
+
+        // Check admin access
+        function checkAdminAccess() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const adminEmails = ['vetmaa286@gmail.com', 'amanvverma109@gmail.com']; // Add admin emails here
+            
+            if (user.email && adminEmails.includes(user.email)) {
+                document.getElementById('dashboardContent').classList.remove('hidden');
+                document.getElementById('accessDenied').classList.add('hidden');
+                loadDashboardData();
+                return true;
+            } else {
+                document.getElementById('dashboardContent').classList.add('hidden');
+                document.getElementById('accessDenied').classList.remove('hidden');
+                return false;
+            }
+        }
+
+        // Override the checkAuthState function to include admin check
+        window.addEventListener('authStateChanged', function(event) {
+            if (event.detail.user) {
+                checkAdminAccess();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
