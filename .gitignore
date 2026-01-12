@@ -59,6 +59,10 @@ firebase-debug.log
 .DS_Store
 Thumbs.db
 
+# Replit/Development files
+.local/
+*.bin
+
 # Temporary files
 *.tmp
 *.temp
